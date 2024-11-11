@@ -1,0 +1,107 @@
+-- task 1
+SELECT SUM(UnitPrice * Quantity) AS SumSales
+FROM sales_items
+WHERE SalesId IN (
+    SELECT SalesId
+    FROM sales
+    WHERE ShipCountry = 'USA' AND (SalesDate BETWEEN '2012-01-01' AND '2012-03-31')
+)
+;
+
+-- task 1 join
+SELECT SUM(si.UnitPrice * si.Quantity) AS SumSales
+FROM sales s
+JOIN sales_items si ON s.SalesId = si.SalesId
+WHERE s.ShipCountry = 'USA' AND (s.SalesDate BETWEEN '2012-01-01' AND '2012-03-31')
+;
+
+-- task 2
+SELECT DISTINCT c.FirstName
+FROM customers c
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM employees e
+    WHERE LOWER(c.FirstName) = LOWER(e.FirstName)
+)
+;
+
+-- task 2 join
+SELECT c.FirstName
+FROM customers c
+LEFT JOIN employees e ON LOWER(c.FirstName) = LOWER(e.FirstName)
+GROUP BY c.FirstName
+HAVING COUNT(
+    CASE 
+        WHEN e.FirstName IS NULL
+        THEN 1 END
+    ) > 0
+;
+
+-- task 2 logical diff
+SELECT customers.FirstName
+FROM customers
+EXCEPT
+SELECT employees.FirstName
+FROM employees
+;
+
+-- task 3
+Запрос 1 сначала соединяет, а затем фильтрует.
+Запрос 2 фильтрует в процессе соединения.
+Поэтому запрос 1 может вернуть больше строк.
+
+# task 4
+SELECT AlbumId, COUNT(TrackId) AS TrackAmount
+FROM tracks
+GROUP BY AlbumId
+ORDER BY AlbumId
+;
+ 
+-- task 4 join
+SELECT a.Title, COUNT(t.TrackId) AS TrackAmount
+FROM albums a
+LEFT JOIN tracks t ON a.AlbumId = t.AlbumId
+GROUP BY a.Title, a.AlbumId
+ORDER BY a.AlbumId
+;
+
+-- task 5
+SELECT c.FirstName, c.LastName
+FROM customers c
+JOIN sales s ON c.CustomerId = s.CustomerId
+WHERE c.Country = 'Germany'
+  AND strftime('%Y', s.SalesDate) = '2009'
+  AND s.ShipCity = 'Berlin'
+
+-- task 6
+SELECT c.LastName
+FROM customers c
+JOIN (
+    SELECT s.CustomerId, SUM(si.Quantity) AS SumQuantity
+    FROM sales s
+    JOIN sales_items si ON s.SalesId = si.SalesId
+    GROUP BY s.CustomerId
+    HAVING SUM(si.Quantity) > 30
+) AS CustomerSumQuantity ON c.CustomerId = CustomerSumQuantity.CustomerId;
+
+-- task 6 join
+SELECT c.LastName
+FROM customers c
+JOIN sales s ON c.CustomerId = s.CustomerId
+JOIN sales_items si ON s.SalesId = si.SalesId
+GROUP BY c.CustomerId, c.LastName
+HAVING SUM(si.Quantity) > 30;
+
+-- task 7
+SELECT g.Name, AVG(t.UnitPrice) AS AvgUnitPrice
+FROM genres g
+JOIN tracks t ON g.GenreId = t.GenreId
+GROUP BY g.Name
+ORDER BY g.Name;
+
+-- task 8
+SELECT g.Name
+FROM genres g
+JOIN tracks t ON g.GenreId = t.GenreId
+GROUP BY g.Name
+HAVING AVG(t.UnitPrice) > 1;
