@@ -1,0 +1,64 @@
+1) 'SELECT FirstName, LastName 
+    FROM customers 
+    WHERE City = "Prague"'
+
+2) 'SELECT FirstName, LastName 
+    FROM customers 
+    WHERE (SELECT instr(FirstName, "M") = 1)
+    or (SELECT instr(FirstName, "ch") > 0) 
+    or (SELECT instr(FirstName, "Ch") > 0)'
+
+3) 'SELECT bytes / 1048576.0 
+    FROM tracks'
+
+4) 'SELECT LastName, FirstName 
+    FROM employees 
+    WHERE city = "Calgary" 
+    and (SELECT instr((HireDate), "2002") = 1)'
+
+5) 'SELECT LastName, FirstName 
+    FROM employees 
+    WHERE date(HireDate, "-40 year") > date(BirthDate)'
+
+6) 'SELECT FirstName, Fax 
+    FROM customers  
+    WHERE Country = "USA"
+    and Fax is NULL'
+
+7) 'SELECT ShipCity 
+    FROM sales  
+    WHERE ShipCountry = "Canada" 
+    and ((SELECT instr(SalesDate, "09") = 6) or (SELECT instr(SalesDate, "08") = 6))'
+
+8) 'SELECT Email   
+    FROM customers 
+    WHERE (SELECT instr(Email, "gmail.com") > 0)'
+
+9) 'SELECT *
+    FROM employees 
+    WHERE date("now", "-18 year") > date(HireDate)'
+
+10) 'SELECT DISTINCT Title 
+    FROM employees 
+    ORDER BY Title'
+
+11) 'SELECT LastName, FirstName, Age 
+    FROM customers 
+    ORDER BY LastName, FirstName, Age'
+
+12) 'SELECT min(milliseconds)/1000.0 
+    FROM tracks'
+
+13) 'SELECT Name, min(milliseconds)/1000.0 
+    FROM tracks'
+
+14) 'SELECT Country, avg(Age) 
+    FROM customers 
+    GROUP BY Country'
+
+15) 'SELECT LastName 
+    FROM employees 
+    WHERE (SELECT instr(HireDate, "10") = 6)'
+
+16) 'SELECT LastName FROM employees 
+    WHERE HireDate = (SELECT min(HireDate) FROM employees)'
